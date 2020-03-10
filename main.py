@@ -20,6 +20,7 @@ while frame_found:
     #TODO: only start processing if number of faces > 0
     #TODO: draw a box on the recognised face in this complete frame
     #TODO: maybe instead of showing live the frames we can save those frames in which we recognised someone
+    
     face, (x1, y1, x2, y2) = face_recognition_obj.extract_face(image)
     if face.size == 0:
         print("Waiting for a face to appear!!!")
