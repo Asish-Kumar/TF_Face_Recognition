@@ -20,17 +20,20 @@ while frame_found:
     #TODO: only start processing if number of faces > 0
     #TODO: draw a box on the recognised face in this complete frame
     #TODO: maybe instead of showing live the frames we can save those frames in which we recognised someone
-    
+
     face, (x1, y1, x2, y2) = face_recognition_obj.extract_face(image)
+    print(face.size)
     if face.size == 0:
         print("Waiting for a face to appear!!!")
+        frame_found, frame = capture_video.read()
         continue
     embadding = face_recognition_obj.get_embedding(model, face)
 
     predicted_name, confidence = classifier_obj.classify(face, embadding)
     print("x1 y1 x2 y2", x1, y1, x2, y2)
     cv2.rectangle(frame, (x1, y1), (x2, y2), 20)
-    cv2.imshow("{} confidence = {}".format(predicted_name, confidence), frame)
-    cv2.waitKey(1)
+    cv2.imshow("frame", frame)
+    if cv2.waitKey(1) == ord('a'):
+        break
 
     frame_found, frame = capture_video.read()
