@@ -53,4 +53,3 @@ np.savez_compressed('training_dataset.npz', faces=faces, labels=labels)
 np.savez_compressed('training_face_embaddings.npz', embaddings=embaddings_array, labels=labels)
 print("="*30)
 print(faces.shape, labels.shape)
-
