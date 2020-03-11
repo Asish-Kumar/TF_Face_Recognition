@@ -1,10 +1,8 @@
-# face detection for the 5 Celebrity Faces Dataset
 from os import listdir
 from os.path import isdir
 from PIL import Image
 import numpy as np
 import sys
-from matplotlib import pyplot
 from mtcnn.mtcnn import MTCNN
 
 """
@@ -18,10 +16,12 @@ np.set_printoptions(threshold=sys.maxsize)
 
 class FaceRecognitionTf:
     def __init__(self):
+        self.image_size = (160, 160)
         pass
 
-    def extract_face(self, image, required_size=(160, 160)):
-        """extract a single face from a given photograph"""
+    def extract_faces(self, image):
+        """Extract all the faces from a given photograph. It returns list of dict (one dict for one face)
+        and image pixel matrix."""
         # convert to RGB, if needed
         image = image.convert('RGB')
         # convert to array
@@ -29,26 +29,14 @@ class FaceRecognitionTf:
         # create the detector, using default weights
         detector = MTCNN()
         # detect faces in the image
-        results = detector.detect_faces(pixels)
-        # return if no face found
-        if len(results) == 0:
-            return np.array([]), (0, 0, 0, 0)
-        # extract the bounding box from the first face
-        print("Cordinates are :",results[0]['box'])
-        x1, y1, width, height = results[0]['box']
-        # bug fix
-        x1, y1 = abs(x1), abs(y1)
-        x2, y2 = x1 + width, y1 + height
-        # extract the face
-        face = pixels[y1:y2, x1:x2]
-        # resize pixels to the model size
-        image = Image.fromarray(face)
-        image = image.resize(required_size)
-        face_array = np.asarray(image)
-        return face_array, (x1, y1, x2, y2)
+        results = detector.detect_faces(pixels)  # returns list of dict (one dict for one face)
+        print("Detected face result is :", results)
+        return results, pixels
 
     def load_faces(self, directory):
-        """Load images and extract faces for all images in a directory."""
+        """Load images and extract faces for all images in a directory.
+        This function is only supposed to be used for training the model therefore it considers only one face in
+        one image."""
         faces = list()
         # enumerate files
         for filename in listdir(directory):
@@ -57,10 +45,21 @@ class FaceRecognitionTf:
             # load image from file
             image = Image.open(path)
             # get face
-            face, _ = self.extract_face(image)
+            results, pixels = self.extract_faces(image)
             # continue if no faces were found
-            if face.size == 0:
+            if len(results) == 0:
                 continue
+            # get the coordinates for first face in the image from left side
+            x1, y1, width, height = results[0]['box']
+            # bug fix
+            x1, y1 = abs(x1), abs(y1)
+            x2, y2 = x1 + width, y1 + height
+            # extract the face
+            face = pixels[y1:y2, x1:x2]
+            # resize pixels to the model size
+            image = Image.fromarray(face)
+            image = image.resize(self.image_size)
+            face = np.asarray(image)
             # store
             faces.append(face)
         return faces

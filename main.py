@@ -16,22 +16,35 @@ while frame_found:
     array = np.asarray(frame)
     image = Image.fromarray(array)
 
-    #TODO: program for multiple faces in the frame
-    #TODO: only start processing if number of faces > 0
-    #TODO: draw a box on the recognised face in this complete frame
     #TODO: maybe instead of showing live the frames we can save those frames in which we recognised someone
 
-    face, (x1, y1, x2, y2) = face_recognition_obj.extract_face(image)
-    print(face.size)
-    if face.size == 0:
+    results, pixels = face_recognition_obj.extract_faces(image)
+    no_of_faces = len(results)
+    if no_of_faces == 0:
         print("Waiting for a face to appear!!!")
         frame_found, frame = capture_video.read()
         continue
-    embadding = face_recognition_obj.get_embedding(model, face)
+    # getting all the faces from right side
+    while no_of_faces > 0:
+        no_of_faces -= 1
+        x1, y1, width, height = results[no_of_faces]['box']
+        # bug fix
+        x1, y1 = abs(x1), abs(y1)
+        x2, y2 = x1 + width, y1 + height
+        # extract the face
+        face = pixels[y1:y2, x1:x2]
+        # resize pixels to the model size
+        image = Image.fromarray(face)
+        image = image.resize(face_recognition_obj.image_size)
+        face = np.asarray(image)
 
-    predicted_name, confidence = classifier_obj.classify(face, embadding)
-    print("x1 y1 x2 y2", x1, y1, x2, y2)
-    cv2.rectangle(frame, (x1, y1), (x2, y2), 20)
+        embadding = face_recognition_obj.get_embedding(model, face)
+
+        predicted_name, confidence = classifier_obj.classify(face, embadding)
+
+        cv2.rectangle(frame, (x1, y1), (x2, y2), 20)
+        cv2.putText(frame, '%s (%.2f%%)'%(predicted_name, confidence), (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (36, 255, 12), 1)
+
     cv2.imshow("frame", frame)
     if cv2.waitKey(1) == ord('a'):
         break
