@@ -30,7 +30,7 @@ class FaceRecognitionTf:
         detector = MTCNN()
         # detect faces in the image
         results = detector.detect_faces(pixels)  # returns list of dict (one dict for one face)
-        print("Detected face result is :", results)
+        # print("Detected face result is :", results)
         return results, pixels
 
     def load_faces(self, directory):

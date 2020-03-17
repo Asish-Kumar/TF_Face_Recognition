@@ -3,6 +3,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import Normalizer
 from sklearn.svm import SVC
 
+
 class Classifier:
     def __init__(self):
         training_face_embadding_data = np.load('training_face_embaddings.npz')
@@ -28,8 +29,7 @@ class Classifier:
         yhat_prob = self._model.predict_proba(samples)
         # get name
         class_index = yhat_class[0]
-        print("Class name is: ",yhat_class)
         class_probability = yhat_prob[0,class_index] * 100
         predict_names = self._out_encoder.inverse_transform(yhat_class)
-        print('Predicted: %s (%.3f)' % (predict_names[0], class_probability))
+
         return predict_names[0], class_probability
