@@ -5,12 +5,6 @@ import numpy as np
 import sys
 from mtcnn.mtcnn import MTCNN
 
-"""
-ISSUES:
-1. During testing a single photo will have multiple faces , our extract_faces function only extracts one face
-
-"""
-
 np.set_printoptions(threshold=sys.maxsize)
 
 
