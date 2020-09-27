@@ -14,6 +14,7 @@ model = load_model('facenet_keras.h5', compile=False)
 total_faces_recognised = 0
 capture_video = cv2.VideoCapture(0) # 0 to capture video from camera 0
 frame_found, frame = capture_video.read()
+print("press 'a' to exit program.")
 while frame_found:
     array = np.asarray(frame)
     image = Image.fromarray(array)

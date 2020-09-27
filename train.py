@@ -11,10 +11,6 @@ from face_recognition_tf import FaceRecognitionTf
 
 face_recognition_obj = FaceRecognitionTf()
 
-"""
-PENDING:
-1. Calculate performance gain by using GPU over CPU
-"""
 
 model = load_model('facenet_keras.h5')
 print('Loaded Model')

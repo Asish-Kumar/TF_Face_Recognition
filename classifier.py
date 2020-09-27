@@ -22,8 +22,8 @@ class Classifier:
         samples = np.expand_dims(test_face_embadding, axis=0)
         yhat_class = self._model.predict(samples)
 
-        #TODO: see what happens if an unknown face is detected --> it is left unrecognised
-        #TODO: no changes are required to be made for multiple faces in the image,
+        # see what happens if an unknown face is detected --> it is left unrecognised
+        # no changes are required to be made for multiple faces in the image,
         # coz there will be no more than one face input to this function
 
         yhat_prob = self._model.predict_proba(samples)
